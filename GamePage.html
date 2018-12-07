@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="main.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+</head>
+<style>
+    .footer{
+        background: rgb(93, 146, 93); 
+        position: fixed; 
+        right: 0;
+        left: 0;
+        margin-right: auto;
+        margin-left: auto; bottom: 0;
+        color: white;
+    }
+    .btn{
+        box-shadow: 0 0 8px black;
+    }
+    .navbar{
+        box-shadow: 0 0 20px black;
+    }
+    body{
+        background: lightblue;
+    }
+    .cont {
+        margin-top: 7.5%;
+        width: 610px !important;
+        height: 610px !important;
+        overflow: hidden;
+        position: fixed;
+        right: 0;
+        left: 0;
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+    .cells {
+        width: 150px !important;
+        height: 150px !important;
+        float: left;
+        background-image: url("img/a.jpg");
+        background-size: cover;
+        display: block;
+        border: 0.1px solid black;
+        box-shadow: 0 0 8px black;
+    }
+
+    .imgs {
+        width: 150px !important;
+        height: 150px !important;
+        border: 0.1px solid black;
+        float: left;
+        box-shadow: 0 0 8px black;
+        display: none;
+    }
+
+    .match {
+        display: block !important;
+        pointer-events: none !important;
+    }
+
+    .selected {
+        pointer-events: none !important;
+        display: block !important;
+    }
+</style>
+<script>
+
+    window.addEventListener('load',
+        function () {
+            var images = document.getElementsByClassName("imgs");
+            var card = document.getElementsByClassName("cells");
+            var cards = document.querySelectorAll(".cells");
+            var container = document.getElementById("container");
+            var imagesQueryAll = document.querySelectorAll(".imgs");
+            var show = document.getElementsByClassName("btnShow")[0];
+            var startGame = document.getElementsByClassName("btnStart")[0];
+            var timer = document.getElementById("time");
+
+
+            startGame.addEventListener('click',
+                function () {
+                    var t = 0;
+                    var timerFonk = setInterval(countTime, 1000);
+                    function countTime() {
+                        var a = ++t;
+                        if (t == 30) {
+                            clearInterval(t);
+                            alert("Time is Finish!");
+                            window.location.reload();
+                        }
+                        timer.innerHTML = "Time: " + a;
+                    }
+                });
+
+
+            var showCount = 0;
+            show.addEventListener('click',
+                function () {
+                    showCount++;
+
+                    if (showCount === 1) {
+                        for (var i = 0; i < images.length; i++) {
+                            images[i].classList.add("selected");
+                            card[i].classList.add("selected");
+                        }
+                    }
+                    else {
+                        for (var i = 0; i < images.length; i++) {
+                            images[i].classList.remove("selected");
+                            card[i].classList.remove("selected");
+                        }
+                        showCount = 0;
+                    }
+                });
+
+            //Takes pictures from nums array to stack in ranNum array randomly.
+            var nums = ["i1.jpg", "i3.jpg", "i5.jpg", "i7.jpg", "i9.jpg", "i11.jpg", "i13.jpg", "i15.jpg",
+                "i1.jpg", "i3.jpg", "i5.jpg", "i7.jpg", "i9.jpg", "i11.jpg", "i13.jpg", "i15.jpg"]
+            ranNums = [],
+                i = nums.length,
+                j = 0;
+            while (i--) {
+                j = Math.floor(Math.random() * (i + 1));
+                ranNums.push(nums[j]);
+                nums.splice(j, 1);
+            }
+
+            //The for loop will looping till images lenght, in this senerio it will 16 because we have 16 cells and images.
+            //Into cells and images it will add random values as image src and image alt.
+
+            for (var k = 0; k < images.length; k++) {
+                images[k].src = "img/" + ranNums[k];
+                card[k].alt = ranNums[k];
+                images[k].alt = ranNums[k];
+            }
+
+            //The fonk looking if there is a match then the clickable fonk will call the match to add match class into cells.
+            function match() {
+
+                var selected = document.querySelectorAll(".selected");
+                selected.forEach(card => {
+                    card.classList.add('match');
+                });
+            }
+
+            //The fonk looking if there is a not match then the clickable fonk will call the resetMatch to remove match class into cells.
+            function resetMatch() {
+
+                firstClick = '';
+                secondClick = '';
+                counter = 0;
+
+                var selected = document.querySelectorAll(".selected");
+                selected.forEach(card => {
+                    card.classList.remove('selected');
+                });
+            }
+
+            //Clickable fonk has event listener for clicking cells to show up images elements alt names, and calculate if there is a equals,
+            //match fonk will come to figure or resetMatch to no equality.
+            //Also we have firstClick and SecondClick variables, the are holding card(cells) alt variables to compare each other to,
+            //find equality or not.
+
+
+            let delay = 200;
+            let matchCounter = 0;
+            let counter = 0;
+            let firstClick = '';
+            let secondClick = '';
+            function clickable(f) {
+                return function () {
+
+                    if (counter < 2) {
+                        counter++;
+                        if (counter === 1) {
+                            images[f].classList.add('selected');
+                            card[f].classList.add('selected');
+                            firstClick = card[f].alt;
+                            console.log(firstClick);
+                        }
+                        else {
+                            images[f].classList.add('selected');
+                            card[f].classList.add('selected');
+                            secondClick = card[f].alt;
+                            console.log(secondClick);
+                        }
+                        if (firstClick !== '' && secondClick !== '') {
+
+                            if (firstClick === secondClick) {
+                                console.log("matches");
+                                matchCounter += 1;
+                                if (matchCounter > 7) {
+                                    alert("Congratulations");
+                                    window.location.reload();
+                                    //container.style.opacity = "0.5";
+                                }
+                                console.log(matchCounter);
+                                setTimeout(match, delay);
+                                setTimeout(resetMatch, delay);
+
+                            }
+                            else {
+                                console.log("not matches");
+                                setTimeout(resetMatch, delay);
+                            }
+                        }
+                    }
+                }
+            }
+            for (var f = 0; f < card.length; f++) {
+                card[f].addEventListener("click", clickable(f));
+            }
+        });
+
+</script>
+
+<body>
+    <navbar class="navbar" style="background: rgb(93, 146, 93);">
+        <h3 id="time" style="color: white;">Time:</h3>
+        <input type="button" class="btn btnStart" value="Start Button">
+        <input type="button" class="btn btnShow" value="Show Images">
+    </navbar>
+
+    <div class="cont" id="container">
+        <div class="cells">
+            <img class="imgs" src="" alt="">
+        </div>
+        <div class="cells">
+            <img class="imgs" src="" alt="">
+        </div>
+        <div class="cells">
+            <img class="imgs" src="" alt="">
+        </div>
+        <div class="cells">
+            <img class="imgs" src="" alt="">
+        </div>
+        <div class="cells">
+            <img class="imgs" src="" alt="">
+        </div>
+        <div class="cells">
+            <img class="imgs" src="" alt="">
+        </div>
+        <div class="cells">
+            <img class="imgs" src="" alt="">
+        </div>
+        <div class="cells">
+            <img class="imgs" src="" alt="">
+        </div>
+        <div class="cells">
+            <img class="imgs" src="" alt="">
+        </div>
+        <div class="cells">
+            <img class="imgs" src="" alt="">
+        </div>
+        <div class="cells">
+            <img class="imgs" src="" alt="">
+        </div>
+        <div class="cells">
+            <img class="imgs" src="" alt="">
+        </div>
+        <div class="cells">
+            <img class="imgs" src="" alt="">
+        </div>
+        <div class="cells">
+            <img class="imgs" src="" alt="">
+        </div>
+        <div class="cells">
+            <img class="imgs" src="" alt="">
+        </div>
+        <div class="cells">
+            <img class="imgs" src="" alt="">
+        </div>
+    </div>
+    <footer class="footer">
+        <p style="text-align: center; font-family: fantasy;"><b>kubilaycakmak</b></p>
+    </footer>
+</body>
+
+</html>
